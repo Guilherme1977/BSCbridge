@@ -1,9 +1,7 @@
 import React from "react";
 
-import { Route } from "react-router-dom";
-
 import initBridge from "./components/bridge";
-import setupNetwork from "./functions/setupnetwork";
+// import setupNetwork from "./functions/setupnetwork";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import EthLogo from "./assets/ethLogo.svg";
@@ -59,19 +57,20 @@ class App extends React.Component {
         />
         <div className="container App-container">
           <div className="mt-4">
+            <div className="container-fluid">
             <div className="exchangeWrapper">
               <h3 className="leftTitleWrapper mb-0">
-                <img src={ExchangeCircle} alt="circle" />
+                <img src={ExchangeCircle} alt="circle" className="chainlogos"/>
                 Exchange Path
               </h3>
               <div className="rightTitleWrapper">
                 <h3 className="mb-0 blockchain">
-                  <img src={EthLogo} alt="ethLogo" />
+                  <img src={EthLogo} alt="ethLogo" className="chainlogos"/>
                   ETH
                 </h3>
                 <img src={DoubleArrows} alt="arrows" />
                 <h3 className="mb-0 blockchain">
-                  <img src={BscLogo} alt="bscLogo" />
+                  <img src={BscLogo} alt="bscLogo" className="chainlogos"/>
                   BSC
                 </h3>
               </div>
@@ -80,7 +79,7 @@ class App extends React.Component {
               <NotConnected handleConnection={this.handleConnection} />
             ) : (
               <Connected />
-            )}
+            )}</div>
             <Bridge />
           </div>
         </div>

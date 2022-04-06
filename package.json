@@ -7,7 +7,6 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "abi-decoder": "^2.4.0",
-    "copy-to-clipboard": "^3.3.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "moment": "^2.29.1",

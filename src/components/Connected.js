@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import Success from "../assets/success.png";
 import { shortenAddress } from "../functions/getShortAddress";
-import {useCopyClipboard} from '../functions/copyClipboard'
-import Copy from '../assets/copy.svg'
+import Copy from "../assets/copy.png";
 class Connected extends Component {
+  state = {
+    copied: false,
+  };
   render() {
-//   const [isCopied, setCopied] = useCopyClipboard()
-
+    //   const [isCopied, setCopied] = useCopyClipboard()
+    const account = window.ethereum.selectedAddress;
     return (
       <div className="connectWallet">
         <h3 className="titleWrapper">
@@ -18,9 +20,28 @@ class Connected extends Component {
             />
           </div>
           Wallet has been connected
-          <img src={Copy} alt='copy'/>
         </h3>
-        <h5 className="mb-0">{shortenAddress(window.ethereum.selectedAddress)}</h5>
+        <h5 className="mb-0 d-flex justify-content-center gap-3">
+          {shortenAddress(account)}
+          {this.state.copied === true ? (
+            <img src={Success} alt="success" />
+          ) : (
+            <img
+              src={Copy}
+              alt="copy"
+              style={{
+                height: 20,
+                width: 20,
+                filter: "contrast(0.5)",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                navigator.clipboard.writeText(account);
+                this.setState({ copied: true });
+              }}
+            />
+          )}
+        </h5>
       </div>
     );
   }

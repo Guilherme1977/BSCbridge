@@ -49,7 +49,7 @@ body {
   --box-bg: #fff;
   --box-bg-gray: #f5f5f5;
   --white: #fff;
-  --light-gray: rgba(0,0,0, 0.4);
+  --light-gray: rgba(0, 0, 0, 0.4);
   --radio: #fde6e8;
   --solid-btn-bg: #e30613;
   --solid-btn-hover-bg: #a00000;
@@ -80,10 +80,10 @@ body.dark {
   --text-color: #fff;
   --box-bg: #28232c;
   --radio: #171318;
-  --box-bg-gray: #3E3D44;
+  --box-bg-gray: #3e3d44;
   --white: #fff;
-  --light-gray: #C2C2C2;
-  --solid-btn-bg: linear-gradient(51.32deg, #E30613 -12.3%, #FA4A33 50.14%);
+  --light-gray: #c2c2c2;
+  --solid-btn-bg: linear-gradient(51.32deg, #e30613 -12.3%, #fa4a33 50.14%);
   --solid-btn-hover-bg: #ff4d58;
   --light-blue: var(--white);
   --stats-grey: rgba(255, 255, 255, 0.3);
@@ -202,7 +202,11 @@ small {
 @media screen and (max-width: 570px) {
   .connectWallet {
     display: grid;
-    justify-content: initial;
+    justify-content: center;
+  }
+
+  .titleWrapper {
+    margin-bottom: 10px !important;
   }
 }
 
@@ -236,6 +240,9 @@ button.connectWalletBTN {
   width: 30px;
   height: 30px;
   border-radius: 50%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
 .titleWrapper {
@@ -248,7 +255,7 @@ button.connectWalletBTN {
 .leftTitleWrapper {
   gap: 14px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   color: white;
 }
 
@@ -491,6 +498,35 @@ strong {
     padding-right: 7.5px !important;
     font-size: 12px !important;
   }
+
+
+  .leftTitleWrapper {
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .chainlogos{
+    height: 15px;
+  }
+
+  .blockchain {
+    gap: 6px;
+    display: flex;
+    align-items: center;
+}
+
+.titleWrapper {
+  font-size: 16px;
+  margin-bottom: 10px !important;
+}
+
+.rightTitleWrapper {
+  gap: 5px;
+}
+
+.exchangeWrapper {
+  background-size: auto;
+}
 }
 
 /* customized css starts below */

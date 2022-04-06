@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import getFormattedNumber from "../functions/get-formatted-number";
 import Countdown from "react-countdown";
 import EthChain from "../assets/ethChain.svg";
 import BscChain from "../assets/bscChain.svg";
 import Info from "../assets/info.svg";
-
 
 // Renderer callback with condition
 const getRenderer =
@@ -51,29 +50,37 @@ export default function initVault({
         gasPrice: "",
         txHash: "",
         chainText: "",
+        is_wallet_connected: false,
         withdrawableUnixTimestamp: null,
       };
     }
 
     componentDidMount() {
-      //   this.refreshBalance();
+      this.refreshBalance();
       this.getChainSymbol();
-
-    //   window._refreshBalInterval = setInterval(this.refreshBalance, 4000);
+      this.fetchData();
+      window._refreshBalInterval = setInterval(this.refreshBalance, 4000);
       window._refreshBalInterval = setInterval(this.getChainSymbol, 500);
-
-      //   fetch(
-      //     "https://data-api.defipulse.com/api/v1/egs/api/ethgasAPI.json?api-key=f9b308da480b2941d3f23b9e0366c141f8998f75803a5ee65f51cbcb261f"
-      //   )
-      //     .then((res) => res.json())
-      //     .then((data) => this.setState({ gasPrice: data.fast / 10 }))
-      //     .catch(console.error);
     }
 
     componentWillUnmount() {
-      //   clearInterval(window._refreshBalInterval);
+      clearInterval(window._refreshBalInterval);
     }
 
+    fetchData = async () => {
+      let is_wallet_connected = await window.connectWallet();
+      this.setState({
+        is_wallet_connected,
+      });
+      if (is_wallet_connected === true) {
+        fetch(
+          "https://data-api.defipulse.com/api/v1/egs/api/ethgasAPI.json?api-key=f9b308da480b2941d3f23b9e0366c141f8998f75803a5ee65f51cbcb261f"
+        )
+          .then((res) => res.json())
+          .then((data) => this.setState({ gasPrice: data.fast / 10 }))
+          .catch(console.error);
+      }
+    };
     handleApprove = (e) => {
       e.preventDefault();
       let amount = this.state.depositAmount;
@@ -89,13 +96,16 @@ export default function initVault({
       let amount = this.state.depositAmount;
       amount = new BigNumber(amount).times(10 ** TOKEN_DECIMALS).toFixed(0);
       let bridge = this.state.network == "ETH" ? bridgeETH : bridgeBSC;
+      let chainId = await window.web3.eth.getChainId();
 
-      let contract = await window.getBridgeContract(bridge._address);
-      contract.methods
-        .deposit(amount)
-        .send({ from: await window.getCoinbase() }, (err, txHash) => {
-          this.setState({ txHash });
-        });
+      if (chainId !== undefined) {
+        let contract = await window.getBridgeContract(bridge._address);
+        contract.methods
+          .deposit(amount)
+          .send({ from: await window.getCoinbase() }, (err, txHash) => {
+            this.setState({ txHash });
+          });
+      }
     };
 
     handleWithdraw = async (e) => {
@@ -127,61 +137,63 @@ export default function initVault({
       });
     };
     refreshBalance = async () => {
-      let coinbase = await window.getCoinbase();
-      this.setState({ coinbase });
-      try {
-        let chainId = await window.web3.eth.getChainId();
+      if (this.state.is_wallet_connected === true) {
+        let coinbase = await window.getCoinbase();
+        this.setState({ coinbase });
+        try {
+          let chainId = await window.web3.eth.getChainId();
 
-        let network = window.config.chain_ids[chainId] || "UNKNOWN";
+          let network = window.config.chain_ids[chainId] || "UNKNOWN";
 
-        let token_balance = await (network == "BSC"
-          ? tokenBSC
-          : tokenETH
-        ).balanceOf(coinbase);
+          let token_balance = await (network == "BSC"
+            ? tokenBSC
+            : tokenETH
+          ).balanceOf(coinbase);
 
-        this.setState({
-          token_balance,
-          network,
-        });
+          this.setState({
+            token_balance,
+            network,
+          });
 
-        if (this.state.txHash) {
-          try {
-            let url =
-              window.config.SIGNATURE_API_URL +
-              `/api/withdraw-args?depositNetwork=${
-                this.state.network == "ETH" ? "BSC" : "ETH"
-              }&txHash=${this.state.txHash}&getWithdrawableUnixTimestamp=true`;
-            console.log({ url });
-            let { withdrawableUnixTimestamp } = await window.jQuery.get(url);
-            this.setState({ withdrawableUnixTimestamp });
-            console.log({ withdrawableUnixTimestamp });
-          } catch (e) {
-            console.error(e);
-            this.setState({ withdrawableUnixTimestamp: null });
-          }
-        } else this.setState({ withdrawableUnixTimestamp: null });
-      } catch (e) {
-        console.error(e);
+          if (this.state.txHash) {
+            try {
+              let url =
+                window.config.SIGNATURE_API_URL +
+                `/api/withdraw-args?depositNetwork=${
+                  this.state.network == "ETH" ? "BSC" : "ETH"
+                }&txHash=${
+                  this.state.txHash
+                }&getWithdrawableUnixTimestamp=true`;
+              console.log({ url });
+              let { withdrawableUnixTimestamp } = await window.jQuery.get(url);
+              this.setState({ withdrawableUnixTimestamp });
+              console.log({ withdrawableUnixTimestamp });
+            } catch (e) {
+              console.error(e);
+              this.setState({ withdrawableUnixTimestamp: null });
+            }
+          } else this.setState({ withdrawableUnixTimestamp: null });
+        } catch (e) {
+          console.error(e);
+        }
       }
     };
 
     getChainSymbol = async () => {
       try {
         let chainId = await window.web3.eth.getChainId();
-        if (chainId === 56) this.setState({chainText: 'BSC'})
-        else if (chainId === 1)  this.setState({chainText: 'ETH'})
-        
+        if (chainId === 56) this.setState({ chainText: "BSC" });
+        else if (chainId === 1) this.setState({ chainText: "ETH" });
       } catch (err) {
-        this.setState({chainText: 'ETH'})
-        console.log(err);
+        this.setState({ chainText: "ETH" });
+        // console.log(err);
       }
     };
 
-    
     render() {
       let canWithdraw = false;
       let timeDiff = null;
-     
+
       if (this.state.withdrawableUnixTimestamp) {
         timeDiff = Math.max(
           0,
@@ -192,7 +204,7 @@ export default function initVault({
 
       return (
         <div>
-          <div className="container">
+          <div className="container-fluid">
             <div className="token-staking mt-5">
               <div className="row">
                 <div
@@ -217,7 +229,7 @@ export default function initVault({
                                     <span className="chainContent">
                                       <img
                                         src={
-                                            this.state.chainText === "ETH"
+                                          this.state.chainText === "ETH"
                                             ? EthChain
                                             : this.state.chainText === "BSC"
                                             ? BscChain
@@ -316,7 +328,7 @@ export default function initVault({
                                 <span className="chainContent">
                                   <img
                                     src={
-                                        this.state.chainText === "ETH"
+                                      this.state.chainText === "ETH"
                                         ? EthChain
                                         : this.state.chainText === "BSC"
                                         ? BscChain
@@ -372,8 +384,10 @@ export default function initVault({
                             >
                               After Successful Deposit, Switch MetaMask to{" "}
                               {this.state.network == "ETH" ? "BSC" : "ETH"}{" "}
-                              network if you deposited on <span className="alertText">{this.state.network}{" "}
-                              network!</span>
+                              network if you deposited on{" "}
+                              <span className="alertText">
+                                {this.state.network} network!
+                              </span>
                             </p>
                             <p
                               className="mt-1 text-muted mt-3"
@@ -381,16 +395,22 @@ export default function initVault({
                             >
                               {" "}
                               Please note that the maximum amount that you can
-                              swap <span className="alertText">per wallet every 24 hours is maximum 50,000
-                              DYP tokens.</span>
+                              swap{" "}
+                              <span className="alertText">
+                                per wallet every 24 hours is maximum 50,000 DYP
+                                tokens.
+                              </span>
                             </p>
                             <p
                               className="mt-1 text-muted mt-3"
                               style={{ fontSize: ".8rem" }}
                             >
-                              We recommend on saving the <span className="alertText">transaction hash</span>, in
-                              case you have network issues you will be able to
-                              withdraw later.
+                              We recommend on saving the{" "}
+                              <span className="alertText">
+                                transaction hash
+                              </span>
+                              , in case you have network issues you will be able
+                              to withdraw later.
                             </p>
                           </div>
                         </form>
