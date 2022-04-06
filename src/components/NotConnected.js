@@ -20,7 +20,7 @@ class NotConnected extends Component {
           style={{ borderRadius: "6px" }}
           className="btn connectWalletBTN pr-5 pl-5"
         >
-          CONNECT WALLET
+          Connect Wallet
         </button>
       </div>
     );

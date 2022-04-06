@@ -13,6 +13,7 @@ import Connected from "./components/Connected";
 import DoubleArrows from "./assets/arrows.svg";
 import ExchangeCircle from "./assets/exchangeCircle.svg";
 
+
 const Bridge = initBridge({
   bridgeETH: window.bridge_eth,
   bridgeBSC: window.bridge_bsc,
@@ -65,13 +66,13 @@ class App extends React.Component {
               </h3>
               <div className="rightTitleWrapper">
                 <h3 className="mb-0 blockchain">
-                  <img src={BscLogo} alt="bsclogo" />
-                  BSC
+                  <img src={EthLogo} alt="ethLogo" />
+                  ETH
                 </h3>
                 <img src={DoubleArrows} alt="arrows" />
                 <h3 className="mb-0 blockchain">
-                  <img src={EthLogo} alt="ethLogo" />
-                  ETH
+                  <img src={BscLogo} alt="bscLogo" />
+                  BSC
                 </h3>
               </div>
             </div>
