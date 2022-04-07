@@ -68,11 +68,8 @@ export default function initVault({
     }
 
     fetchData = async () => {
-      let is_wallet_connected = await window.connectWallet();
-      this.setState({
-        is_wallet_connected,
-      });
-      if (is_wallet_connected === true) {
+
+      if (this.state.is_wallet_connected === true) {
         fetch(
           "https://data-api.defipulse.com/api/v1/egs/api/ethgasAPI.json?api-key=f9b308da480b2941d3f23b9e0366c141f8998f75803a5ee65f51cbcb261f"
         )
@@ -81,6 +78,7 @@ export default function initVault({
           .catch(console.error);
       }
     };
+
     handleApprove = (e) => {
       e.preventDefault();
       let amount = this.state.depositAmount;
@@ -136,6 +134,17 @@ export default function initVault({
           .toFixed(TOKEN_DECIMALS),
       });
     };
+
+    checkConnection = async () => {
+      let test = await window.web3.eth?.getAccounts()
+      .then((data) =>{
+        data.length === 0
+          ? this.setState({ is_wallet_connected: false })
+          : this.setState({ is_wallet_connected: true })}
+      );
+      
+  }
+
     refreshBalance = async () => {
       if (this.state.is_wallet_connected === true) {
         let coinbase = await window.getCoinbase();
@@ -154,7 +163,7 @@ export default function initVault({
             token_balance,
             network,
           });
-
+          
           if (this.state.txHash) {
             try {
               let url =
