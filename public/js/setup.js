@@ -906,3 +906,28 @@ window.token_dyp_bsc = new TOKEN(window.config.token_dyp_bsc_address)
 
 window.bridge_eth = new BRIDGE(window.config.bridge_eth_address, window.config.token_dyp_eth_address)
 window.bridge_bsc = new BRIDGE(window.config.bridge_bsc_address, window.config.token_dyp_bsc_address)
+
+window.infuraWeb3 = new Web3('https://mainnet.infura.io/v3/94608dc6ddba490697ec4f9b723b586e')
+window.bscWeb3 = new Web3('https://bsc-dataseed.binance.org/')
+
+async function getTokenHolderBalanceAll(holder, token_address, network) {
+	if (network == 1) {
+		let tokenContract = new window.infuraWeb3.eth.Contract(
+			window.TOKEN_ABI,
+			token_address,
+			{from: undefined}
+		);
+		return await tokenContract.methods.balanceOf(holder).call();
+	}
+	if (network == 2) {
+		let tokenContract = new window.bscWeb3.eth.Contract(
+			window.TOKEN_ABI,
+			token_address,
+			{from: undefined}
+		);
+		return await tokenContract.methods.balanceOf(holder).call();
+	}
+	return 0;
+}
+
+window.getTokenHolderBalanceAll = getTokenHolderBalanceAll
