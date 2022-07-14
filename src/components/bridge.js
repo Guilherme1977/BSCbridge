@@ -498,7 +498,7 @@ export default function initVault({
                               Please note that the maximum amount that you can
                               swap{" "}
                               <span className="alertText">
-                                per wallet every 24 hours is maximum 50,000 DYP
+                                per wallet every 24 hours is maximum 200,000 DYP
                                 tokens.
                               </span>
                             </p>
