@@ -78,7 +78,7 @@ class App extends React.Component {
             {this.state.is_wallet_connected === false ? (
               <NotConnected handleConnection={this.handleConnection} />
             ) : (
-              <Connected />
+              <Connected account={this.state.coinbase} />
             )}</div>
             <Bridge />
           </div>

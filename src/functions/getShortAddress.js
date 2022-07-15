@@ -1,5 +1,5 @@
   export function shortenAddress(address, chars = 6) {
-    const parsed = window.ethereum.selectedAddress
+    const parsed = address
     if (!parsed) {
       throw Error(`Invalid 'address' parameter '${address}'.`)
     }
